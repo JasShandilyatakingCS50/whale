@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Whale Audit v12.7 | High-Speed Turbo</title>
+    <title>Whale Audit v12.9 | Ultra-Speed Pro</title>
     <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <style>
         :root {
@@ -15,81 +15,73 @@
             --text: #1a1a1a;
             --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
         }
-        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; line-height: 1.5; overflow-x: hidden; transition: background 0.5s ease, color 0.5s ease; }
+        body { margin: 0; background: var(--bg); color: var(--text); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; line-height: 1.5; overflow-x: hidden; transition: background 0.5s ease; }
         #particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; }
-        .theme-panel { max-width: 1200px; margin: 0 auto 20px auto; background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid var(--border); box-shadow: var(--shadow); display: flex; gap: 20px; align-items: center; flex-wrap: wrap; backdrop-filter: blur(8px); }
-        .theme-group { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: bold; }
-        .color-swatch { width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }
+        
+        /* Layout */
         .header-section { max-width: 1200px; margin: 0 auto 30px auto; }
         .stats-bar { display: flex; justify-content: space-around; background: var(--card-bg); padding: 25px; border-radius: 15px; border: 1px solid var(--border); box-shadow: var(--shadow); backdrop-filter: blur(4px); }
         .stat-num { display: block; font-size: 1.6rem; font-weight: 800; color: var(--accent); }
+        
+        /* Progress */
         .prog-container { width: 100%; height: 10px; background: #e9ecef; border-radius: 5px; margin: 15px 0; display: none; overflow: hidden; }
         #bar { width: 0%; height: 100%; background: var(--accent); transition: width 0.1s linear; }
-        .controls { display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border); box-shadow: var(--shadow); backdrop-filter: blur(4px); }
-        .btn { padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border); background: #fff; color: #333; cursor: pointer; font-weight: 600; transition: 0.3s; font-size: 0.9rem; }
+        
+        /* Controls */
+        .theme-panel { max-width: 1200px; margin: 0 auto 20px auto; background: var(--card-bg); padding: 15px; border-radius: 15px; border: 1px solid var(--border); display: flex; gap: 20px; align-items: center; backdrop-filter: blur(8px); }
+        .controls { display: flex; gap: 12px; align-items: center; justify-content: center; flex-wrap: wrap; margin-bottom: 30px; background: var(--card-bg); padding: 20px; border-radius: 15px; border: 1px solid var(--border); box-shadow: var(--shadow); }
+        
+        /* Components */
+        .btn { padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border); background: #fff; cursor: pointer; font-weight: 600; transition: 0.3s; font-size: 0.9rem; }
         .btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .btn-refresh { background: var(--accent); color: white !important; border: none; }
         .btn-mail { background: #6f42c1; color: white !important; border: none; }
-        input[type="text"], select, input[type="color"], .pw-input { background: white !important; border: 1px solid var(--border); color: #000 !important; padding: 10px; border-radius: 8px; outline: none; }
-        .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 20px; }
-        .account-panel { background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px; padding: 25px; box-shadow: var(--shadow); backdrop-filter: blur(4px); transition: 0.3s; position: relative; color: #1a1a1a; }
-        .badge { padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; margin-left: 5px; text-transform: uppercase; }
-        .badge-admin { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+        
+        .container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(450px, 1fr)); gap: 20px; }
+        .account-panel { background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px; padding: 20px; box-shadow: var(--shadow); backdrop-filter: blur(4px); position: relative; }
+        
+        /* Badges */
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; margin-left: 5px; }
         .badge-mail-error { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
-        .badge-revoked { background: #333; color: #ffeb3b; border: 1px solid #000; }
-        .badge-banned { background: #ff0000; color: #fff; border: 1px solid #000; }
-        .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .data-group h4 { margin: 15px 0 10px 0; font-size: 0.75rem; color: #6c757d; text-transform: uppercase; }
-        .row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; }
-        .val { font-weight: 600; font-family: monospace; }
-        .mail-toggle-btn { width: 100%; background: rgba(0,0,0,0.05); padding: 12px; border: 1px solid var(--border); color: var(--accent); font-weight: bold; border-radius: 8px; cursor: pointer; margin-top:10px; }
-        .mail-container { display: none; margin-top: 15px; background: white; padding: 15px; border-radius: 10px; border: 1px solid var(--border); color: #000; }
+        .badge-revoked { background: #333; color: #ffeb3b; }
+        .badge-banned { background: #ff0000; color: #fff; }
+
+        .row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; border-bottom: 1px solid rgba(0,0,0,0.03); }
+        .val { font-weight: 600; font-family: monospace; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 250px; }
+        
+        .mail-toggle-btn { width: 100%; background: rgba(0,0,0,0.05); padding: 10px; border: 1px solid var(--border); color: var(--accent); font-weight: bold; border-radius: 8px; cursor: pointer; margin-top:10px; }
+        .mail-container { display: none; margin-top: 15px; background: #fff; padding: 10px; border-radius: 8px; border: 1px solid #ddd; max-height: 300px; overflow-y: auto; }
     </style>
 </head>
 <body>
 <div id="particles-js"></div>
+
 <div class="theme-panel">
-    <div class="theme-group">Presets:
-        <div class="color-swatch" style="background: linear-gradient(to right, #f0f2f5, #007bff);" title="Ocean" onclick="applyPreset('ocean')"></div>
-        <div class="color-swatch" style="background: linear-gradient(to right, #1a1a2e, #e94560);" title="Midnight" onclick="applyPreset('midnight')"></div>
-        <div class="color-swatch" style="background: linear-gradient(to right, #000000, #00ff41);" title="Matrix" onclick="applyPreset('matrix')"></div>
-    </div>
-    <div class="theme-group">Accent: <input type="color" id="accentPicker" value="#007bff" oninput="updateTheme()"></div>
-    <div class="theme-group">BG: <input type="color" id="bgPicker" value="#f0f2f5" oninput="updateTheme()"></div>
+    <div style="font-weight:bold; font-size:0.8rem;">Accent:</div>
+    <input type="color" id="accentPicker" value="#007bff" oninput="updateTheme()">
+    <button class="btn" onclick="applyPreset('midnight')">Midnight</button>
+    <button class="btn" onclick="applyPreset('ocean')">Ocean</button>
 </div>
 
 <div class="header-section">
     <div class="stats-bar">
-        <div class="stat-item">Accounts Found<span id="stat-count" class="stat-num">0</span></div>
-        <div class="stat-item">Unique Revenue<span id="stat-rev" class="stat-num">$0.00</span></div>
-        <div class="stat-item">Status<span id="status-text" class="stat-num" style="font-size: 1rem;">Standby</span></div>
+        <div class="stat-item">Indexed<span id="stat-count" class="stat-num">0</span></div>
+        <div class="stat-item">Banned Found<span id="stat-banned" class="stat-num" style="color:var(--red)">0</span></div>
+        <div class="stat-item">Revenue<span id="stat-rev" class="stat-num">$0.00</span></div>
     </div>
     <div class="prog-container" id="progWrapper"><div id="bar"></div></div>
 </div>
 
 <div class="controls">
-    <input type="text" id="search" placeholder="Search logins..." oninput="render()">
-    <div style="background: rgba(0,0,0,0.05); padding: 5px 15px; border-radius: 8px; display: flex; gap: 15px; align-items: center;">
-        <label style="font-size:0.85rem; cursor:pointer; color: #000;"><input type="checkbox" id="mailErrorOnly" onchange="render()"> Errors</label>
-        <label style="font-size:0.85rem; cursor:pointer; color: #000;"><input type="checkbox" id="noMailError" onchange="render()"> Working</label>
-        <label style="font-size:0.85rem; cursor:pointer; color: #d32f2f; font-weight:bold;"><input type="checkbox" id="revokedOnly" onchange="render()"> ⚠️ Revoked</label>
-        <label style="font-size:0.85rem; cursor:pointer; color: #ff0000; font-weight:bold;"><input type="checkbox" id="bannedOnly" onchange="render()"> 🚫 Banned</label>
-    </div>
-
-    <select id="sortOption" onchange="render()">
-        <option value="newest">Sort: Newest</option>
-        <option value="admin">Sort: Admins First</option>
-        <option value="spent_high">Spent: High to Low</option>
-        <option value="fn_high">V-Bucks: High to Low</option>
-        <option value="skins_high">Skins: High to Low</option>
-    </select>
-
-    <button class="btn btn-refresh" onclick="masterRefresh()">🚀 Deep Scrape (20x)</button>
-    <button class="btn btn-mail" onclick="checkAllMailboxesParallel()">⚡ Turbo Mail (20x)</button>
-    <button class="btn" onclick="document.getElementById('fileInput').click()">📥 Import</button>
+    <input type="text" id="search" placeholder="Search accounts..." oninput="render()" style="padding:10px; border-radius:8px; border:1px solid #ddd; width:250px;">
+    <label style="font-size:0.85rem;"><input type="checkbox" id="bannedOnly" onchange="render()"> 🚫 Banned</label>
+    <label style="font-size:0.85rem;"><input type="checkbox" id="revokedOnly" onchange="render()"> ⚠️ Revoked</label>
+    <label style="font-size:0.85rem;"><input type="checkbox" id="errorOnly" onchange="render()"> ❌ Errors</label>
+    
+    <button class="btn btn-refresh" onclick="masterRefresh()">🚀 Scrape Accounts</button>
+    <button class="btn btn-mail" onclick="checkAllMailboxesParallel()">⚡ Turbo Filter (20x)</button>
     <button class="btn" onclick="exportJSON()">📤 Export</button>
     <button class="btn" onclick="clearData()" style="color:var(--red)">🗑️ Reset</button>
-    <input type="file" id="fileInput" accept=".json" onchange="importJSON(event)" style="display:none;">
 </div>
 
 <div class="container" id="mainContainer"></div>
@@ -103,28 +95,36 @@ const CONFIG = {
     USER: "swagcell67@gmail.com",
     PASS: "T8ertot2023!",
     FALLBACK_PW: "F0rtn1te@123",
-    THREADS: 20 // Ultra high speed
+    THREADS: 20
 };
 
 let auditData = JSON.parse(localStorage.getItem('audit_v12_storage') || "[]");
 let currentJWT = "";
 
+// --- DETECTION LOGIC ---
 const REVOKE_PATTERN = /[a-zA-Z]\*+[a-zA-Z]@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
-const EPIC_BAN_LINK = "safety.epicgames.com/fr/sanctions-and-appeals";
 
 function scanEmails(emails) {
     let result = { revoked: false, banned: false };
     if (!emails || !Array.isArray(emails)) return result;
-    emails.forEach(m => {
-        const text = (m.text || m.html || "").toLowerCase();
-        const subject = (m.subject || "").toLowerCase();
-        if (subject.includes("odzyskan") || subject.includes("recovery") || REVOKE_PATTERN.test(text)) result.revoked = true;
-        if (text.includes(EPIC_BAN_LINK)) result.banned = true;
-    });
+
+    for (const m of emails) {
+        const fullContent = ((m.text || "") + (m.html || "") + (m.subject || "")).toLowerCase();
+        
+        // Accurate Ban Check: Safety link presence is the primary trigger
+        if (fullContent.includes("safety.epicgames.com")) {
+            result.banned = true;
+        }
+
+        // Revoke Check
+        if (fullContent.includes("odzyskan") || fullContent.includes("recovery") || REVOKE_PATTERN.test(fullContent)) {
+            result.revoked = true;
+        }
+    }
     return result;
 }
 
-// --- HIGH SPEED TURBO FILTER ---
+// --- TURBO FILTER (20 THREADS) ---
 async function checkAllMailboxesParallel() {
     const status = document.getElementById('status-text');
     const bar = document.getElementById('bar');
@@ -140,10 +140,12 @@ async function checkAllMailboxesParallel() {
             let item = auditData[i];
             
             try {
+                // Initial Attempt
                 let r = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(item.email_login)}&password=${encodeURIComponent(item.email_password)}`);
                 let d = await r.json();
 
-                if(d.error && d.error.includes("Invalid login")) {
+                if(d.error) {
+                    // Fallback Attempt
                     let r2 = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(item.email_login)}&password=${encodeURIComponent(CONFIG.FALLBACK_PW)}`);
                     let d2 = await r2.json();
                     if(!d2.error) {
@@ -160,7 +162,7 @@ async function checkAllMailboxesParallel() {
             } catch(e) { item.email_error = true; }
             
             completed++;
-            status.innerText = `Turbo: ${completed}/${auditData.length}`;
+            document.getElementById('status-text').innerText = `Filtering: ${completed}/${auditData.length}`;
             bar.style.width = `${(completed / auditData.length) * 100}%`;
         }
     }
@@ -169,32 +171,29 @@ async function checkAllMailboxesParallel() {
     await Promise.all(threads);
     saveAndRender();
     wrapper.style.display = 'none';
-    status.innerText = "Turbo Done";
 }
 
-// --- HIGH SPEED MASTER REFRESH ---
+// --- SCRAPING LOGIC (20 THREADS) ---
 async function masterRefresh() {
-    const status = document.getElementById('status-text');
-    const bar = document.getElementById('bar');
     const wrapper = document.getElementById('progWrapper');
     wrapper.style.display = 'block';
-    status.innerText = "Auth...";
     try {
         currentJWT = await fetchNewToken();
         let allUsers = [];
         let page = 1;
-        let hasMore = true;
-        while(hasMore) {
-            status.innerText = `Indexing: ${allUsers.length}`;
+        
+        // Phase 1: Index Users
+        while(page < 20) {
             const r = await fetch(`${CONFIG.BASE}?page=${page}&limit=100`, { headers: { 'Authorization': `Bearer ${currentJWT}` } });
             const d = await r.json();
-            if(!d.users || d.users.length === 0 || allUsers.length > 2000) hasMore = false;
-            else { allUsers.push(...d.users); page++; }
+            if(!d.users || d.users.length === 0) break;
+            allUsers.push(...d.users); page++;
         }
 
         let results = [];
         let userIdx = 0;
         
+        // Phase 2: Parallel Purchase Fetching
         async function fetchWorker() {
             while(userIdx < allUsers.length) {
                 const u = allUsers[userIdx++];
@@ -205,51 +204,79 @@ async function masterRefresh() {
                         const acc = p.account_data || {};
                         const parts = (acc.copyFormatData?.login_data || "").split(':');
                         results.push({
-                            user_id: u.id, user_email: u.email, total_spent_on_site: parseFloat(u.total_spent) || 0,
-                            is_admin: u.is_admin, item_id: p.lzt_item_id, epic_login: parts[0] || 'N/A', 
-                            epic_password: parts[1] || 'N/A', email_login: parts[2] || 'N/A', 
-                            email_password: parts[3] || 'N/A', fortnite_balance: parseInt(acc.fortnite_balance) || 0,
-                            fortnite_username: acc.fortnite_username || "Unknown",
-                            skin_count: parseInt(acc.fortnite_skin_count) || 0, 
+                            user_id: u.id, user_email: u.email, total_spent: parseFloat(u.total_spent) || 0,
+                            item_id: p.lzt_item_id, epic_login: parts[0] || 'N/A', epic_password: parts[1] || 'N/A', 
+                            email_login: parts[2] || 'N/A', email_password: parts[3] || 'N/A', 
+                            fn_user: acc.fortnite_username || "Unknown", skins: parseInt(acc.fortnite_skin_count) || 0,
                             email_error: false, is_revoked: false, is_banned: false
                         });
                     });
                 } catch(e) {}
-                bar.style.width = `${(userIdx / allUsers.length) * 100}%`;
-                status.innerText = `Scrape: ${userIdx}/${allUsers.length}`;
             }
         }
-
-        const workers = Array(CONFIG.THREADS).fill(null).map(fetchWorker);
-        await Promise.all(workers);
-        
+        await Promise.all(Array(CONFIG.THREADS).fill(null).map(fetchWorker));
         auditData = results;
         saveAndRender();
-        status.innerText = "Scrape Done";
-    } catch(err) { status.innerText = "Error"; }
-    setTimeout(() => wrapper.style.display = 'none', 2000);
+    } catch(err) { console.error(err); }
+    wrapper.style.display = 'none';
 }
 
-// --- STANDARD CORE ---
-function updateTheme() {
-    const root = document.documentElement;
-    const accent = document.getElementById('accentPicker').value;
-    const bg = document.getElementById('bgPicker').value;
-    root.style.setProperty('--accent', accent);
-    root.style.setProperty('--bg', bg);
-    const rgb = parseInt(bg.substring(1).padStart(6, '0'), 16);
-    const luma = 0.2126*((rgb>>16)&0xff) + 0.7152*((rgb>>8)&0xff) + 0.0722*(rgb&0xff);
-    root.style.setProperty('--card-bg', luma < 128 ? 'rgba(30,30,30,0.9)' : 'rgba(255,255,255,0.95)');
-    root.style.setProperty('--border', luma < 128 ? '#444' : '#dee2e6');
+// --- UI & CORE ---
+function render() {
+    const container = document.getElementById('mainContainer');
+    const term = document.getElementById('search').value.toLowerCase();
+    const bOnly = document.getElementById('bannedOnly').checked;
+    const rOnly = document.getElementById('revokedOnly').checked;
+    const eOnly = document.getElementById('errorOnly').checked;
+
+    let filtered = auditData.filter(x => {
+        const matchesSearch = `${x.fn_user} ${x.email_login}`.toLowerCase().includes(term);
+        if (bOnly && !x.is_banned) return false;
+        if (rOnly && !x.is_revoked) return false;
+        if (eOnly && !x.email_error) return false;
+        return matchesSearch;
+    });
+
+    document.getElementById('stat-count').innerText = filtered.length;
+    document.getElementById('stat-banned').innerText = filtered.filter(x => x.is_banned).length;
+    document.getElementById('stat-rev').innerText = `$${filtered.reduce((a, b) => a + b.total_spent, 0).toFixed(2)}`;
+    
+    container.innerHTML = filtered.map(item => `
+        <div class="account-panel" style="${item.is_banned ? 'border: 2px solid red;' : ''}">
+            <div style="display:flex; justify-content:space-between;">
+                <h3 style="margin:0;">${item.fn_user}</h3>
+                <div>
+                    ${item.is_banned ? '<span class="badge badge-banned">BANNED</span>' : ''}
+                    ${item.is_revoked ? '<span class="badge badge-revoked">REVOKED</span>' : ''}
+                    ${item.email_error ? '<span class="badge badge-mail-error">ERROR</span>' : ''}
+                </div>
+            </div>
+            <div style="margin-top:10px;">
+                <div class="row"><span>Epic:</span><span class="val">${item.epic_login}</span></div>
+                <div class="row"><span>Mail:</span><span class="val">${item.email_login}:${item.email_password}</span></div>
+                <div class="row"><span>Skins:</span><span class="val">${item.skins}</span></div>
+                <div class="row"><span>Customer:</span><span class="val">${item.user_email}</span></div>
+            </div>
+            <button class="mail-toggle-btn" onclick="toggleMailBox('${item.item_id}', '${item.email_login}', '${item.email_password}')">📩 View History</button>
+            <div id="mail-zone-${item.item_id}" class="mail-container"></div>
+        </div>
+    `).join('');
 }
 
-function applyPreset(name) {
-    const acc = document.getElementById('accentPicker');
-    const bg = document.getElementById('bgPicker');
-    if(name === 'ocean') { acc.value = "#007bff"; bg.value = "#f0f2f5"; }
-    if(name === 'midnight') { acc.value = "#e94560"; bg.value = "#1a1a2e"; }
-    if(name === 'matrix') { acc.value = "#00ff41"; bg.value = "#000000"; }
-    updateTheme();
+async function toggleMailBox(id, email, pass) {
+    const zone = document.getElementById(`mail-zone-${id}`);
+    if(zone.style.display === 'block') { zone.style.display = 'none'; return; }
+    zone.style.display = 'block'; zone.innerHTML = "Fetching...";
+    try {
+        const r = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(pass)}`);
+        const d = await r.json();
+        zone.innerHTML = (d.emails || []).map(m => `
+            <div style="padding:5px; border-bottom:1px solid #eee; font-size:0.8rem; color:#333;">
+                ${((m.text||"")+(m.html||"")).toLowerCase().includes("safety.epicgames.com") ? '🚫 ' : ''}
+                <b>${m.subject}</b><br>${new Date(m.date*1000).toLocaleDateString()}
+            </div>
+        `).join('') || "No history.";
+    } catch(e) { zone.innerHTML = "Connection Error."; }
 }
 
 async function fetchNewToken() {
@@ -258,108 +285,23 @@ async function fetchNewToken() {
         headers: { 'apikey': CONFIG.API_KEY, 'authorization': `Bearer ${CONFIG.API_KEY}`, 'content-type': 'application/json' },
         body: JSON.stringify({ email: CONFIG.USER, password: CONFIG.PASS })
     });
-    const d = await r.json();
-    return d.access_token;
-}
-
-function render() {
-    const container = document.getElementById('mainContainer');
-    const term = document.getElementById('search').value.toLowerCase();
-    const sort = document.getElementById('sortOption').value;
-    const errorOnly = document.getElementById('mailErrorOnly').checked;
-    const workingOnly = document.getElementById('noMailError').checked;
-    const revokedOnly = document.getElementById('revokedOnly').checked;
-    const bannedOnly = document.getElementById('bannedOnly').checked;
-
-    let filtered = auditData.filter(x => {
-        const matchesSearch = `${x.fortnite_username} ${x.user_email} ${x.email_login}`.toLowerCase().includes(term);
-        let matchesError = errorOnly ? x.email_error === true : true;
-        let matchesRevoked = revokedOnly ? x.is_revoked === true : true;
-        let matchesBanned = bannedOnly ? x.is_banned === true : true;
-        let matchesWorking = workingOnly ? (x.email_error === false && x.is_revoked === false && x.is_banned === false) : true;
-        return matchesSearch && matchesError && matchesWorking && matchesRevoked && matchesBanned;
-    });
-
-    filtered.sort((a, b) => {
-        if(sort === "admin") return b.is_admin - a.is_admin;
-        if(sort === "spent_high") return b.total_spent_on_site - a.total_spent_on_site;
-        if(sort === "fn_high") return b.fortnite_balance - a.fortnite_balance;
-        if(sort === "skins_high") return b.skin_count - a.skin_count;
-        return 0;
-    });
-
-    document.getElementById('stat-count').innerText = filtered.length;
-    document.getElementById('stat-rev').innerText = `$${filtered.reduce((acc, curr) => acc + (curr.total_spent_on_site || 0), 0).toFixed(2)}`;
-    
-    container.innerHTML = filtered.map(item => `
-        <div class="account-panel" style="${(item.is_revoked || item.is_banned) ? 'border: 2px solid #000; background: #fffde7;' : ''}">
-            <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h2 style="margin:0;">${item.fortnite_username}</h2>
-                <div>
-                    ${item.is_banned ? '<span class="badge badge-banned">🚫 BANNED</span>' : ''}
-                    ${item.is_revoked ? '<span class="badge badge-revoked">⚠️ REVOKED</span>' : ''}
-                    ${item.email_error ? '<span class="badge badge-mail-error">Mail Error</span>' : ''}
-                </div>
-            </div>
-            <div class="data-grid">
-                <div class="data-group">
-                    <h4>Stats</h4>
-                    <div class="row"><span>Skins:</span><span class="val">${item.skin_count}</span></div>
-                    <div class="row"><span>V-Bucks:</span><span class="val">${item.fortnite_balance}</span></div>
-                </div>
-                <div class="data-group">
-                    <h4>Source</h4>
-                    <div class="row"><span>Owner:</span><span class="val">${item.user_email}</span></div>
-                    <div class="row"><span>Spent:</span><span class="val">$${item.total_spent_on_site.toFixed(2)}</span></div>
-                </div>
-            </div>
-            <div class="data-group" style="border-top:1px solid var(--border); padding-top:10px;">
-                <div class="row"><span>Epic:</span><span class="val">${item.epic_login}:${item.epic_password}</span></div>
-                <div class="row"><span>Mail:</span><span class="val">${item.email_login}:${item.email_password}</span></div>
-            </div>
-            <button class="mail-toggle-btn" onclick="toggleMailBox('${item.item_id}', '${item.email_login}', '${item.email_password}')">📩 View Mails</button>
-            <div id="mail-zone-${item.item_id}" class="mail-container"><div id="list-${item.item_id}"></div></div>
-        </div>
-    `).join('');
-}
-
-async function toggleMailBox(id, email, pass) {
-    const zone = document.getElementById(`mail-zone-${id}`);
-    const list = document.getElementById(`list-${id}`);
-    if(zone.style.display === 'block') { zone.style.display = 'none'; return; }
-    zone.style.display = 'block'; list.innerHTML = "Loading...";
-    try {
-        const r = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(pass)}`);
-        const d = await r.json();
-        list.innerHTML = (d.emails || []).map(m => {
-            const content = (m.html || m.text || "").toLowerCase();
-            return `
-            <div style="border-bottom:1px solid #eee; padding:5px 0; color: #000;">
-                <b>${m.subject} ${content.includes(EPIC_BAN_LINK) ? '🚫' : ''}</b> 
-                <button class="btn" style="padding:2px 5px; font-size:0.7rem;" onclick="this.nextElementSibling.style.display='block'">View</button>
-                <iframe sandbox srcdoc="${(m.html || m.text || '').replace(/"/g, '&quot;')}" style="display:none; width:100%; height:250px;"></iframe>
-            </div>`;
-        }).join('') || "Empty.";
-    } catch(e) { list.innerHTML = "Error."; }
+    const d = await r.json(); return d.access_token;
 }
 
 function saveAndRender() { localStorage.setItem('audit_v12_storage', JSON.stringify(auditData)); render(); }
-function clearData() { if(confirm("Reset?")) { auditData = []; saveAndRender(); } }
+function clearData() { if(confirm("Clear local data?")) { auditData = []; saveAndRender(); } }
 function exportJSON() {
     const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: 'application/json' });
-    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `audit_v12.7.json`; a.click();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `audit_pro.json`; a.click();
 }
-function importJSON(e) {
-    const reader = new FileReader();
-    reader.onload = (ev) => { auditData = JSON.parse(ev.target.result); saveAndRender(); };
-    reader.readAsText(e.target.files[0]);
+function updateTheme() { document.documentElement.style.setProperty('--accent', document.getElementById('accentPicker').value); }
+function applyPreset(p) { 
+    document.getElementById('accentPicker').value = p === 'midnight' ? '#e94560' : '#007bff'; 
+    updateTheme(); 
 }
 
-particlesJS('particles-js', {
-    "particles": { "number": { "value": 50 }, "color": { "value": "#888" }, "opacity": { "value": 0.2 }, "size": { "value": 3 }, "line_linked": { "enable": true, "opacity": 0.1 }, "move": { "enable": true, "speed": 1 } }
-});
-
-window.onload = () => { applyPreset('ocean'); render(); };
+particlesJS('particles-js', { "particles": { "number": { "value": 30 }, "opacity": { "value": 0.2 }, "move": { "enable": true, "speed": 1 } } });
+window.onload = render;
 </script>
 </body>
 </html>
