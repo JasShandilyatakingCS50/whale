@@ -48,7 +48,6 @@
 </head>
 <body>
 <div id="particles-js"></div>
-
 <div class="theme-panel">
     <div class="theme-group">
         Presets:
@@ -112,7 +111,8 @@ let currentJWT = "";
 
 // --- PATTERNS ---
 const REVOKE_PATTERN = /[a-zA-Z]\*+[a-zA-Z]@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}/;
-const BANNED_PATTERN = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+// Targeted specific Epic Safety Sanction URL
+const EPIC_BAN_LINK = "safety.epicgames.com/fr/sanctions-and-appeals";
 
 // --- SCANNER LOGIC ---
 function scanEmails(emails) {
@@ -123,10 +123,12 @@ function scanEmails(emails) {
         const subject = (m.subject || "").toLowerCase();
         const text = (m.text || m.html || "").toLowerCase();
         
+        // Revoke detection
         const hasRevokeKeywords = subject.includes("odzyskan") || subject.includes("recovery") || subject.includes("odzyskanie");
         if (hasRevokeKeywords || REVOKE_PATTERN.test(text)) result.revoked = true;
         
-        if (BANNED_PATTERN.test(text) || BANNED_PATTERN.test(subject)) result.banned = true;
+        // Strict Ban Detection: Only flags if the specific Epic Sanction URL is found
+        if (text.includes(EPIC_BAN_LINK)) result.banned = true;
     });
     return result;
 }
@@ -188,7 +190,7 @@ function updateTheme() {
     const bg = document.getElementById('bgPicker').value;
     root.style.setProperty('--accent', accent);
     root.style.setProperty('--bg', bg);
-    const rgb = parseInt(bg.substring(1), 16);
+    const rgb = parseInt(bg.substring(1).padStart(6, '0'), 16);
     const luma = 0.2126*((rgb>>16)&0xff) + 0.7152*((rgb>>8)&0xff) + 0.0722*(rgb&0xff);
     root.style.setProperty('--card-bg', luma < 128 ? 'rgba(30,30,30,0.9)' : 'rgba(255,255,255,0.95)');
     root.style.setProperty('--border', luma < 128 ? '#444' : '#dee2e6');
@@ -341,12 +343,17 @@ async function toggleMailBox(id, email, pass) {
     try {
         const r = await fetch(`${CONFIG.MAIL_API}?email=${encodeURIComponent(email)}&password=${encodeURIComponent(pass)}`);
         const d = await r.json();
-        list.innerHTML = (d.emails || []).map(m => `
+        list.innerHTML = (d.emails || []).map(m => {
+            const content = (m.html || m.text || "").toLowerCase();
+            const isBanned = content.includes(EPIC_BAN_LINK);
+            const isRevoked = REVOKE_PATTERN.test(content);
+            return `
             <div style="border-bottom:1px solid #eee; padding:5px 0; color: #000;">
-                <b>${m.subject} ${BANNED_PATTERN.test(m.text || m.html) ? '🚫' : ''} ${REVOKE_PATTERN.test(m.text || m.html) ? '⚠️' : ''}</b> 
+                <b>${m.subject} ${isBanned ? '🚫' : ''} ${isRevoked ? '⚠️' : ''}</b> 
                 <button class="btn" style="padding:2px 5px; font-size:0.7rem;" onclick="this.nextElementSibling.style.display='block'">View</button>
-                <iframe sandbox srcdoc="${(m.html || m.text).replace(/"/g, '&quot;')}" style="display:none; width:100%; height:250px;"></iframe>
-            </div>`).join('') || "Empty.";
+                <iframe sandbox srcdoc="${(m.html || m.text || '').replace(/"/g, '&quot;')}" style="display:none; width:100%; height:250px;"></iframe>
+            </div>`;
+        }).join('') || "Empty.";
     } catch(e) { list.innerHTML = "Error."; }
 }
 
